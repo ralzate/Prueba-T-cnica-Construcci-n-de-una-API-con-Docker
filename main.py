@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, Query
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -32,10 +32,10 @@ def store_data(data: str):
     db.refresh(db_data)
     return {"message": "Data stored successfully"}
 
-@app.get("/api/data/{id}")
-def get_data_by_id(id: int):
+@app.get("/api/data/filter")
+def get_data_by_filter(filter_value: str = Query(...)):
     db = SessionLocal()
-    db_data = db.query(Data).filter(Data.id == id).first()
+    db_data = db.query(Data).filter(Data.data == filter_value).first()
     if db_data is None:
         return {"error": "Data not found"}
     return db_data
